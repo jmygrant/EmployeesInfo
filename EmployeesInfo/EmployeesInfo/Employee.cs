@@ -117,13 +117,47 @@ namespace EmployeesInfo
 
 		private double _federalTaxRate = 0.15;
 
+		public void CalculatePay()
+		{
+			if(PayRate > 0 && HoursWorked > 0)
+			{
+				CalculateGrossPay();
+			}
+		}
+
 		private void CalculateGrossPay()
 		{
-			int payAmount = 0;
+			double payAmount = 0;
 			if(EmployeePayType == PayType.H)
 			{
-				payAmount = Convert.ToInt32(PayRate * 100) * Convert.ToInt32(HoursWorked * 100);
-				_grossPayAmount = payAmount / 100;
+				if (HoursWorked > 80.0)
+				{
+					double overtime = 80.0 - HoursWorked;
+
+					double regularPay = PayRate * 80.0;
+
+					if (overtime < 10.0)
+					{
+						double overtimePayRate = PayRate * .5 + PayRate;
+						double overtimeAmount = overtimePayRate * overtime;
+						_grossPayAmount = regularPay + overtimeAmount;
+					}
+					else
+					{
+						double singleOvertimeRate = PayRate * .5 + PayRate;
+						double doubleOvertimeRate = PayRate * .75 + PayRate;
+
+						double singleOvertimeAmount = singleOvertimeRate * 10;
+						double doubleOvertimeAmount = doubleOvertimeRate * (overtime - 10);
+						_grossPayAmount = regularPay + singleOvertimeAmount + doubleOvertimeAmount;
+					}
+
+				}
+				else
+				{
+					payAmount = PayRate * HoursWorked;
+					_grossPayAmount = payAmount;
+				}
 			}
 			else
 			{
@@ -139,13 +173,12 @@ namespace EmployeesInfo
 		{
 			int taxAmount = 0;
 			taxAmount = Convert.ToInt32(GrossPayAmount * _federalTaxRate);
-			_federalTaxAmount = Convert.ToDouble(taxAmount / 100);
+			_federalTaxAmount = Convert.ToDouble(taxAmount);
 		}
 
 		private void CalculateStateTaxAmount()
 		{
 			int stateTaxAmount = 0;
-			double stateTaxRate = 0.0;
 
 			switch(EmployeeState)
 			{
@@ -174,7 +207,7 @@ namespace EmployeesInfo
 			}
 
 			stateTaxAmount = Convert.ToInt32(GrossPayAmount * StateTaxRate);
-			_stateTaxAmount = Convert.ToDouble(stateTaxAmount / 100);
+			_stateTaxAmount = Convert.ToDouble(stateTaxAmount);
 
 		}
 
@@ -184,6 +217,18 @@ namespace EmployeesInfo
 				- Convert.ToInt32(StateTaxAmount * 100);
 
 			_netPayAmount = Convert.ToDouble(netPayAmount / 100.00);
+		}
+
+		public Employee()
+		{
+			EmployeeId = string.Empty;
+			FirstName = string.Empty;
+			LastName = string.Empty;
+			EmployeePayType = PayType.H;
+			PayRate = 0.00d;
+			StartDate = new DateTime();
+			EmployeeState = States.AL;
+			HoursWorked = 0.00d;
 		}
 
 		public Employee(string employeeId, string firstName, string lastName, PayType payType,
@@ -196,20 +241,27 @@ namespace EmployeesInfo
 			PayRate = payRate;
 
 			var startDateArr = startDate.Split('/');
-			int day = Convert.ToInt32(startDateArr[0]);
-			int month = Convert.ToInt32(startDateArr[1]);
+			DateTime dateTime = ConvertSeperatedDateToDateTime(startDateArr);
+			StartDate = dateTime;
+			EmployeeState = state;
+			HoursWorked = timeWorked;
+			CalculateGrossPay();
+		}
+
+		public DateTime ConvertSeperatedDateToDateTime(string[] startDateArr)
+		{
+			int month = Convert.ToInt32(startDateArr[0]);
+			int day = Convert.ToInt32(startDateArr[1]);
 			int year = Convert.ToInt32(startDateArr[2]);
-			if(year > 70 && year <=99)
+			if (year > 70 && year <= 99)
 			{
 				year += 1900;
 			}
-			else if(year>= 00 && year <19)
+			else if (year >= 00 && year < 19)
 			{
 				year += 2000;
 			}
-			StartDate = new DateTime(year, month, day);
-			EmployeeState = state;
-			HoursWorked = timeWorked;
+			return new DateTime(year, month, day);
 		}
-    }
+	}
 }
