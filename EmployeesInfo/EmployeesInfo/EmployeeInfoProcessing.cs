@@ -40,6 +40,12 @@ namespace EmployeesInfo
 		{
 			Console.WriteLine("Beginning Processing for Step One.");
 
+			if (string.IsNullOrEmpty(fileName))
+			{
+				Console.WriteLine("Invalid file name. Please make sure the file name is correct.");
+				return;
+			}
+
 			//Since we already sorted the list created from the dictionary
 			// we just create or open the file to output the wanted information.
 			using (var sw = new StreamWriter(_filePath + fileName))
@@ -65,6 +71,13 @@ namespace EmployeesInfo
 		public void WriteStepTwoToFile(string fileName)
 		{
 			Console.WriteLine("Beginning Processing for Step Two.");
+
+			if (string.IsNullOrEmpty(fileName))
+			{
+				Console.WriteLine("Invalid file name. Please make sure the file name is correct.");
+				return;
+			}
+
 			//Getting 15% of the list.
 			int count = Convert.ToInt32(_employeeList.Count * 0.15);
 
@@ -100,6 +113,13 @@ namespace EmployeesInfo
 		public void WriteStepThreeToFile(string fileName)
 		{
 			Console.WriteLine("Beginning Processing for Step Three.");
+
+			if (string.IsNullOrEmpty(fileName))
+			{
+				Console.WriteLine("Invalid file name. Please make sure the file name is correct.");
+				return;
+			}
+
 			var copyList = new List<KeyValuePair<string, Employee>>(_employeeList);
 			//Sorts the list according to state.
 			copyList.Sort((pair1, pair2) => pair1.Value.EmployeeState.CompareTo(pair2.Value.EmployeeState));
@@ -157,6 +177,13 @@ namespace EmployeesInfo
 		public void ReadInFile()
 		{
 			Console.WriteLine("Staring to read in the file.");
+
+			if (string.IsNullOrEmpty(FileName))
+			{
+				Console.WriteLine("Invalid FileName. The Property FileName must be set to run this function.");
+				return;
+			}
+
 			//Making sure that we start with a fresh Dictionary.
 			_employeeRecords.Clear();
 
@@ -168,27 +195,31 @@ namespace EmployeesInfo
 				{
 					// Creates a new employeeInfo and fills it.
 					var employeeInfo = line.Split(',');
-					Employee employee = new Employee();
-					employee.EmployeeId = employeeInfo[0];
-					employee.FirstName = employeeInfo[1];
-					employee.LastName = employeeInfo[2];
-					PayType payType;
-					Enum.TryParse(employeeInfo[3], out payType);
-					employee.EmployeePayType = payType;
-					employee.PayRate = Convert.ToDouble(employeeInfo[4]);
-					var startDate = employeeInfo[5].Split('/');
-					employee.StartDate = employee.ConvertSeperatedDateToDateTime(startDate);
-					States state;
-					Enum.TryParse(employeeInfo[6], out state);
-					employee.EmployeeState = state;
-					employee.HoursWorked = Convert.ToDouble(employeeInfo[7]);
-					employee.CalculatePay();
-
-					//Adds the information to the Dictionary.
-					//I assume that the EmployeeId is always unique.
-					if (!_employeeRecords.ContainsKey(employee.EmployeeId))
+					if (employeeInfo.Length == 8)
 					{
-						_employeeRecords.Add(employee.EmployeeId, employee);
+						Employee employee = new Employee();
+						employee.EmployeeId = employeeInfo[0];
+						employee.FirstName = employeeInfo[1];
+						employee.LastName = employeeInfo[2];
+						PayType payType;
+						Enum.TryParse(employeeInfo[3], out payType);
+						employee.EmployeePayType = payType;
+						employee.PayRate = Convert.ToDouble(employeeInfo[4]);
+						var startDate = employeeInfo[5].Split('/');
+						employee.StartDate = employee.ConvertSeperatedDateToDateTime(startDate);
+						States state;
+						Enum.TryParse(employeeInfo[6], out state);
+						employee.EmployeeState = state;
+						employee.HoursWorked = Convert.ToDouble(employeeInfo[7]);
+						employee.CalculatePay();
+
+
+						//Adds the information to the Dictionary.
+						//I assume that the EmployeeId is always unique.
+						if (!_employeeRecords.ContainsKey(employee.EmployeeId))
+						{
+							_employeeRecords.Add(employee.EmployeeId, employee);
+						}
 					}
 
 				}
