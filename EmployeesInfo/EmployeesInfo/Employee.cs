@@ -125,6 +125,15 @@ namespace EmployeesInfo
 			}
 		}
 
+		public int YearsWorked()
+		{
+			if(StartDate.Year != 0)
+			{
+				return DateTime.Now.Year - StartDate.Year;
+			}
+			return 0;
+		}
+
 		private void CalculateGrossPay()
 		{
 			double payAmount = 0;
@@ -189,7 +198,7 @@ namespace EmployeesInfo
 						StateTaxRate = 0.05;
 						break;
 					}
-				case States.AR:
+				case States.AZ:
 				case States.CO:
 				case States.ID:
 				case States.OR:
