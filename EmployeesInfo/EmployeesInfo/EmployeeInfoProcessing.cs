@@ -13,11 +13,17 @@ namespace EmployeesInfo
 		private string _filePath;
 		public string FileName { get; set; }
 
+		/// <summary>
+		/// Constructor to make an instance of employee record.
+		/// </summary>
 		public EmployeeInfoProcessing()
 		{
 			_employeeRecords = new Dictionary<string, Employee>();
 			_employeeList = new List<KeyValuePair<string, Employee>>();
 
+			//Figuring out a path to look for files and output files.
+			//I depend on files being put in Content folder that is
+			// part of the solution.
 			string filePath = Directory.GetCurrentDirectory();
 			int index = filePath.IndexOf("\\bin");
 			int strLength = filePath.Substring(index).Length;
@@ -26,12 +32,16 @@ namespace EmployeesInfo
 
 		}
 
+		/// <summary>
+		/// Used to find the information for Step One on the coding test.
+		/// </summary>
+		/// <param name="fileName">The name of the file where we will output the information.</param>
 		public void WriteStepOneToFile(string fileName)
 		{
 			Console.WriteLine("Beginning Processing for Step One.");
 
-			//Since we already sorted the passed in file we just create or
-			// open the file to output the wanted information.
+			//Since we already sorted the list created from the dictionary
+			// we just create or open the file to output the wanted information.
 			using (var sw = new StreamWriter(_filePath + fileName))
 			{
 				for (int count = 0; count < _employeeList.Count; count++)
@@ -48,6 +58,10 @@ namespace EmployeesInfo
 			Console.WriteLine("Finished Processing for Step One.");
 		}
 
+		/// <summary>
+		/// Used to find the information for Step Two on the coding test.
+		/// </summary>
+		/// <param name="fileName">The name of the file where we will output the information.</param>
 		public void WriteStepTwoToFile(string fileName)
 		{
 			Console.WriteLine("Beginning Processing for Step Two.");
@@ -79,6 +93,10 @@ namespace EmployeesInfo
 			Console.WriteLine("Finished Processing for Step Two.");
 		}
 
+		/// <summary>
+		/// Used to find the information for Step Three on the coding test.
+		/// </summary>
+		/// <param name="fileName">The name of the file where we will output the information.</param>
 		public void WriteStepThreeToFile(string fileName)
 		{
 			Console.WriteLine("Beginning Processing for Step Three.");
@@ -131,6 +149,11 @@ namespace EmployeesInfo
 			Console.WriteLine("Finished Processing for Step Three.");
 		}
 
+		/// <summary>
+		/// Read in the information from the file. I do expect that the 
+		/// property FileName has been filled. That is where the code will
+		/// look for the information.
+		/// </summary>
 		public void ReadInFile()
 		{
 			Console.WriteLine("Staring to read in the file.");
@@ -175,6 +198,9 @@ namespace EmployeesInfo
 			
 		}
 
+		/// <summary>
+		/// Sort the EmployeeList in Descending order.
+		/// </summary>
 		private void SortEmployeeList()
 		{
 			//Creating a list from the dictionary and sorting it in descending order
@@ -184,6 +210,11 @@ namespace EmployeesInfo
 			_employeeList = list;
 		}
 
+		/// <summary>
+		/// Lookup and return employee information by Id.
+		/// </summary>
+		/// <param name="employeeId"></param>
+		/// <returns>Return the employee at the passed Id. If the value is empty returns an empty employee.</returns>
 		public Employee GetEmployeeById(string employeeId)
 		{
 			if(string.IsNullOrEmpty(employeeId))

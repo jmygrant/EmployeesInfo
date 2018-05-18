@@ -24,7 +24,7 @@ namespace EmployeesInfo
 			employeeRecords.WriteStepThreeToFile("\\Step_03_Output.txt");
 
 			Console.WriteLine("Finished Program.");
-			//Keeping the console open to se the latest messages.
+			//Keeping the console open to see the messages.
 			Console.ReadLine();
 		}
     }

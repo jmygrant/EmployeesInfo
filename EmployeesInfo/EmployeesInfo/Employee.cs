@@ -4,6 +4,8 @@ using System.Text;
 
 namespace EmployeesInfo
 {
+	//Created an enum for the PayType just
+	// to make sure that we use valid values.
 	public enum PayType
 	{
 		H,
@@ -117,6 +119,11 @@ namespace EmployeesInfo
 
 		private double _federalTaxRate = 0.15;
 
+		/// <summary>
+		/// Used to run the calculations for
+		/// GrossPayAmount, FederalPayAmount,
+		/// StatePayAmount, and NetPayAmount.
+		/// </summary>
 		public void CalculatePay()
 		{
 			if(PayRate > 0 && HoursWorked > 0)
@@ -125,6 +132,10 @@ namespace EmployeesInfo
 			}
 		}
 
+		/// <summary>
+		/// Calculate the Number of Years worked.
+		/// </summary>
+		/// <returns></returns>
 		public int YearsWorked()
 		{
 			if(StartDate.Year != 0)
@@ -134,6 +145,10 @@ namespace EmployeesInfo
 			return 0;
 		}
 
+		/// <summary>
+		/// Calclates the GrossPayAmount and calls the 
+		/// other calculate functions to set all values.
+		/// </summary>
 		private void CalculateGrossPay()
 		{
 			double payAmount = 0;
@@ -145,14 +160,17 @@ namespace EmployeesInfo
 
 					double regularPay = PayRate * 80.0;
 
+					//Figuring out if overtime is less than 10 hours over.
 					if (overtime < 10.0)
 					{
+						//Calculate overtime.
 						double overtimePayRate = PayRate * .5 + PayRate;
 						double overtimeAmount = overtimePayRate * overtime;
 						_grossPayAmount = regularPay + overtimeAmount;
 					}
 					else
 					{
+						//Calculate overtime and double overtime.
 						double singleOvertimeRate = PayRate * .5 + PayRate;
 						double doubleOvertimeRate = PayRate * .75 + PayRate;
 
@@ -164,20 +182,28 @@ namespace EmployeesInfo
 				}
 				else
 				{
+					//Calculate PayRate for hourly employees
 					payAmount = PayRate * HoursWorked;
 					_grossPayAmount = payAmount;
 				}
 			}
 			else
 			{
-				payAmount = Convert.ToInt32((PayRate / 26.0) * 100);
-				_grossPayAmount = payAmount / 100;
+				//Calculate the payRate for Salary Employees.
+				payAmount = PayRate / 26.0;
+				_grossPayAmount = payAmount;
 			}
+
+			//Run the other functions to calculate taxes and net pay.
 			CalculateFederalTaxAmount();
 			CalculateStateTaxAmount();
 			CalculateNetPayAmount();
 		}
 
+		/// <summary>
+		/// Caluclate the federal tax amount. This depends on
+		/// GrossPayAmount being set properly.
+		/// </summary>
 		private void CalculateFederalTaxAmount()
 		{
 			int taxAmount = 0;
@@ -185,10 +211,16 @@ namespace EmployeesInfo
 			_federalTaxAmount = Convert.ToDouble(taxAmount);
 		}
 
+		/// <summary>
+		/// Calculate the state tax amount. This depends on
+		/// GrossPayAmount being set properly.
+		/// </summary>
 		private void CalculateStateTaxAmount()
 		{
 			int stateTaxAmount = 0;
 
+			//The only states that I have tax infomation for are listed below.
+			// I have set the value to zero for any state not listed below.
 			switch(EmployeeState)
 			{
 				case States.NV:
@@ -220,6 +252,10 @@ namespace EmployeesInfo
 
 		}
 
+		/// <summary>
+		/// Calculate the net pay amount. This depends on
+		/// GrossPayAmount being set properly.
+		/// </summary>
 		private void CalculateNetPayAmount()
 		{
 			int netPayAmount = Convert.ToInt32(GrossPayAmount * 100) - Convert.ToInt32(FederalTaxAmount * 100)
@@ -228,6 +264,9 @@ namespace EmployeesInfo
 			_netPayAmount = Convert.ToDouble(netPayAmount / 100.00);
 		}
 
+		/// <summary>
+		/// Default constructor to create an employee.
+		/// </summary>
 		public Employee()
 		{
 			EmployeeId = string.Empty;
@@ -240,8 +279,19 @@ namespace EmployeesInfo
 			HoursWorked = 0.00d;
 		}
 
+		/// <summary>
+		/// Creates an Employee from passed in information.
+		/// </summary>
+		/// <param name="employeeId">Employee Id</param>
+		/// <param name="firstName">Employee First Name</param>
+		/// <param name="lastName">Employee Last Name</param>
+		/// <param name="payType">Employee Pay Type</param>
+		/// <param name="payRate">Employee Pay Rate</param>
+		/// <param name="startDate">Employee Start Date</param>
+		/// <param name="state">Employee State</param>
+		/// <param name="hoursWorked">Employee Hours Worked</param>
 		public Employee(string employeeId, string firstName, string lastName, PayType payType,
-			double payRate, string startDate, States state, double timeWorked)
+			double payRate, string startDate, States state, double hoursWorked)
 		{
 			EmployeeId = employeeId;
 			FirstName = firstName;
@@ -253,10 +303,14 @@ namespace EmployeesInfo
 			DateTime dateTime = ConvertSeperatedDateToDateTime(startDateArr);
 			StartDate = dateTime;
 			EmployeeState = state;
-			HoursWorked = timeWorked;
-			CalculateGrossPay();
+			HoursWorked = hoursWorked;
 		}
-
+	
+		/// <summary>
+		/// Convert the input date to a form that can be used with the built in DateTime.
+		/// </summary>
+		/// <param name="startDateArr">Takes the date in the form MM/DD/YY.</param>
+		/// <returns>DateTime set to the passed in date.</returns>
 		public DateTime ConvertSeperatedDateToDateTime(string[] startDateArr)
 		{
 			int month = Convert.ToInt32(startDateArr[0]);
